@@ -2,11 +2,13 @@
 #include "system.h"
 #include "thread.h"
 
-class A : public Thread
+void tick(){}
+
+class MyTestThread : public Thread
 {
 public:
 
-	A(Time timeSlice = defaultTimeSlice, StackSize stackSize = defaultStackSize) : Thread(timeSlice, stackSize)
+	MyTestThread(Time timeSlice = defaultTimeSlice, StackSize stackSize = defaultStackSize) : Thread(timeSlice, stackSize)
 	{}
 
 	void run()
@@ -14,7 +16,7 @@ public:
 		for (int i = 0; i < 30; ++i)
 			{
 				System::lock();
-				cout << "In a() i = " << i << endl;
+				cout << "In thread id=" << getId() << " i = " << i << endl;
 				System::unlock();
 #ifndef BCC_BLOCK_IGNORE
 				for (int k = 0; k < 10000; ++k)
@@ -25,38 +27,17 @@ public:
 	}
 };
 
-class B: public Thread
-{
-public:
-	B(Time timeSlice = defaultTimeSlice, StackSize stackSize = defaultStackSize) : Thread(timeSlice, stackSize)
-	{}
-
-	void run()
-	{
-		for (int i = 0; i < 30; ++i)
-			{
-				System::lock();
-				cout << "In b() i = " << i << endl;
-				System::unlock();
-#ifndef BCC_BLOCK_IGNORE
-				for (int k = 0; k < 10000; ++k)
-					for (int j = 0; j < 30000; ++j);
-#endif
-			}
-			System::exitThread();
-	}
-};
 
 int userMain(int argc, char* argv[])
 {
 	System::lock();
-	A *t1 = new A(40);
+	MyTestThread *t1 = new MyTestThread(40);
 	t1->start();
-	cout << "Created a" << endl;
+	cout << "Created thread 1" << endl;
 
-	B *t2 = new B(20);
+	MyTestThread *t2 = new MyTestThread(20);
 	t2->start();
-	cout << "Created b" << endl;
+	cout << "Created thread 2" << endl;
 
 	System::unlock();
 

@@ -6,13 +6,14 @@
 #include "thread.h"
 
 
-
 volatile unsigned tsp, tss, tbp;
 volatile unsigned System::counter = 20;
 volatile unsigned System::contextSwitchRequested = 0;
 
 typedef void interrupt (*pInterrupt)(...); // for setvect and getvect
 pInterrupt oldRoutine = 0;
+
+extern void tick();
 
 void System::lock()
 {
@@ -32,6 +33,7 @@ void interrupt System::timer(...){
 
 	if (!contextSwitchRequested)
 	{
+		tick();
 		System::counter--;
 #ifndef BCC_BLOCK_IGNORE
 		asm int 60h;

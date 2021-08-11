@@ -3,6 +3,8 @@
 #include <dos.h>
 #include "SCHEDULE.H"
 
+ID PCB::curID = 0;
+
 void PCB::wrapper()
 {
 	running->myThread->run();
@@ -18,6 +20,7 @@ PCB::PCB (Thread *myThread, Time timeSlice, StackSize stackSize)
 	this->timeSlice = timeSlice;
 	this->myThread = myThread;
 	this->finished = 0;
+	id = curID++;
 	initializeStack();
 }
 

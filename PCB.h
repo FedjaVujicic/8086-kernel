@@ -2,8 +2,15 @@
 #define PCB_H_
 #include "thread.h"
 
-class PCB{
-public: //Should probably change these to private, since it says that the PCB class should be invisible to the user application
+class PCB
+{
+private:
+	friend class System;
+	friend class Thread;
+
+	static ID curID;
+	ID id;
+
 	unsigned sp;
 	unsigned ss;
 	unsigned bp;
@@ -12,17 +19,14 @@ public: //Should probably change these to private, since it says that the PCB cl
 	unsigned stackSize;
 	unsigned* stack;
 	Thread *myThread;
-
 	static volatile PCB* running;
 
 	void initializeStack();
-
 	static void wrapper();
 
 	PCB (Thread *myThread = 0, Time timeSlice = defaultTimeSlice, StackSize stackSize = defaultStackSize); //delete default values
 
 	~PCB();
-
 };
 
 

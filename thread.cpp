@@ -25,8 +25,7 @@ void Thread::start()
 	System::unlock();
 }
 
-
-void Thread::waitToComplete()
+ID Thread::getId()
 {
-
+	return myPCB->id;
 }
