@@ -14,7 +14,6 @@ public:
 	static void restore();
 	static void interrupt timer(...);
 	static void dispatch();
-	static void exitThread();
 };
 
 

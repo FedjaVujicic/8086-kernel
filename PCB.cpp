@@ -9,7 +9,7 @@ void PCB::wrapper()
 {
 	running->myThread->run();
 	System::lock();
-	running->finished = 1;
+	running->state = DEAD;
 	System::unlock();
 	System::dispatch();
 }
@@ -19,8 +19,8 @@ PCB::PCB (Thread *myThread, Time timeSlice, StackSize stackSize)
 	this->stackSize = stackSize;
 	this->timeSlice = timeSlice;
 	this->myThread = myThread;
-	this->finished = 0;
 	id = curID++;
+	state = BORN;
 	initializeStack();
 }
 
@@ -39,7 +39,6 @@ void PCB::initializeStack()
 	ss = FP_SEG(stack + stackSize - 12);
 	bp = FP_OFF(stack + stackSize - 12);
 #endif
-	finished = 0;
 	System::unlock();
 }
 

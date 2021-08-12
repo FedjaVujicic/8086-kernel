@@ -1,6 +1,8 @@
 #ifndef _thread_h_
 #define _thread_h_
 
+#include "global.h"
+
 typedef unsigned long StackSize;
 const StackSize defaultStackSize = 4096;
 typedef unsigned int Time; // time, x 55ms
@@ -19,6 +21,8 @@ public:
 	ID getId();
 	static ID getRunningId();
 	static Thread * getThreadById(ID id);
+
+	State getState(); // delet dis
 
 	Thread (Time timeSlice = defaultTimeSlice, StackSize stackSize = defaultStackSize);
 

@@ -57,11 +57,21 @@ void interrupt System::timer(...){
 		cout << "Context switch! Counter= " << counter << endl;
 		System::lock();
 
-		if (!PCB::running->finished)
+		if (PCB::running->state == RUNNING)
 		{
+			PCB::running->state = READY;
 			Scheduler::put((PCB*) PCB::running);
 		}
+		else // delet
+		{
+			cout << "Thread dead, not putting into the scheduler." << endl;
+			System::lock();
+		}
 		PCB::running = Scheduler::get();
+		if (PCB::running != 0)
+		{
+			PCB::running->state = RUNNING;
+		}
 
 		tsp = PCB::running->sp;
 		tss = PCB::running->ss;
@@ -96,7 +106,8 @@ void System::dispatch()
 void System::initialize()
 {
 	System::lock();
-	PCB::running = new PCB(0, 20);
+	PCB::running = new PCB(0, 10);
+	PCB::running->state = RUNNING;
 #ifndef BCC_BLOCK_IGNORE
 	oldRoutine = getvect(0x08);
 	setvect(0x60, oldRoutine);
@@ -115,11 +126,6 @@ void System::restore()
 	System::unlock();
 }
 
-void System::exitThread()
-{
-	PCB::running->finished = 1;
-	System::dispatch();
-}  
 
 
 

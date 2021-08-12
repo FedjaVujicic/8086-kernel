@@ -1,6 +1,7 @@
 #ifndef PCB_H_
 #define PCB_H_
 #include "thread.h"
+#include "global.h"
 
 class PCB
 {
@@ -14,12 +15,13 @@ private:
 	unsigned sp;
 	unsigned ss;
 	unsigned bp;
-	unsigned finished;
 	unsigned timeSlice;
 	unsigned stackSize;
 	unsigned* stack;
 	Thread *myThread;
 	static volatile PCB* running;
+
+	State state;
 
 	void initializeStack();
 	static void wrapper();
