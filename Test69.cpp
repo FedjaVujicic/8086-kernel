@@ -15,9 +15,9 @@ public:
 	{
 		for (int i = 0; i < 30; ++i)
 			{
-				System::lock();
+				lock();
 				cout << "In thread id=" << getId() << " i = " << i << " State = " << getState() << endl;
-				System::unlock();
+				unlock();
 #ifndef BCC_BLOCK_IGNORE
 				for (int k = 0; k < 10000; ++k)
 					for (int j = 0; j < 30000; ++j);
@@ -29,22 +29,22 @@ public:
 
 int userMain(int argc, char* argv[])
 {
-	System::lock();
-	MyTestThread *t1 = new MyTestThread(40);
+	lock();
+	MyTestThread *t1 = new MyTestThread(20);
 	t1->start();
 
-	MyTestThread *t2 = new MyTestThread(40);
+	MyTestThread *t2 = new MyTestThread(20);
 	t2->start();
 
-	System::unlock();
+	unlock();
 
 #ifndef BCC_BLOCK_IGNORE
 	for (int i = 0; i < 30; ++i)
 	{
-		System::lock();
+		lock();
 		cout << "main " << i << endl;
 
-		System::unlock();
+		unlock();
 
 		for (int j = 0; j < 30000; ++j)
 			for (int k = 0; k < 30000; ++k);

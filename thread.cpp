@@ -7,29 +7,29 @@
 
 Thread::Thread (Time timeSlice, StackSize stackSize)
 {
-	System::lock();
+	lock();
 	myPCB = new PCB(this, timeSlice, stackSize);
 	cout << "Created thread id=" << getId() << " State=" << getState() << endl; // delet
-	System::unlock();
+	unlock();
 }
 
 
 Thread::~Thread()
 {
-	System::lock();
+	lock();
 	cout << "Deleted thread id=" << getId() << " State="<< getState() << endl; // delet
-	System::lock(); // delet
+	lock(); // delet
 	delete myPCB;
-	System::unlock();
+	unlock();
 }
 
 void Thread::start()
 {
-	System::lock();
+	lock();
 	myPCB->state = READY;
 	Scheduler::put(myPCB);
 	cout << "Thread in scheduler, state=" << getState() << endl;// delet
-	System::unlock();
+	unlock();
 }
 
 ID Thread::getId()

@@ -4,6 +4,7 @@
 #include "system.h"
 #include "PCB.h"
 #include "thread.h"
+#include "global.h"
 
 
 volatile unsigned tsp, tss, tbp;
@@ -15,14 +16,14 @@ pInterrupt oldRoutine = 0;
 
 extern void tick();
 
-void System::lock()
+void lock()
 {
 #ifndef BCC_BLOCK_IGNORE
 	asm cli;
 #endif
 }
 
-void System::unlock()
+void unlock()
 {
 #ifndef BCC_BLOCK_IGNORE
 	asm sti;
@@ -55,7 +56,7 @@ void interrupt System::timer(...){
 		PCB::running->bp = tbp;
 
 		cout << "Context switch! Counter= " << counter << endl;
-		System::lock();
+		lock();
 
 		if (PCB::running->state == RUNNING)
 		{
@@ -65,13 +66,11 @@ void interrupt System::timer(...){
 		else // delet
 		{
 			cout << "Thread dead, not putting into the scheduler." << endl;
-			System::lock();
+			lock();
 		}
 		PCB::running = Scheduler::get();
-		if (PCB::running != 0)
-		{
-			PCB::running->state = RUNNING;
-		}
+		PCB::running->state = RUNNING;
+
 
 		tsp = PCB::running->sp;
 		tss = PCB::running->ss;
@@ -94,18 +93,18 @@ void interrupt System::timer(...){
 //Context switch on request
 void System::dispatch()
 {
-	System::lock();
+	lock();
 
 	System::contextSwitchRequested = 1;
 	System::timer();
 
-	System::unlock();
+	unlock();
 }
 
 //Saves old timer routine to 60h, and puts the user timer routine to 8h
 void System::initialize()
 {
-	System::lock();
+	lock();
 	PCB::running = new PCB(0, 10);
 	PCB::running->state = RUNNING;
 #ifndef BCC_BLOCK_IGNORE
@@ -113,17 +112,17 @@ void System::initialize()
 	setvect(0x60, oldRoutine);
 	setvect(0x08, timer);
 #endif
-	System::unlock();
+	unlock();
 }
 
 //Restores the old timer routine
 void System::restore()
 {
-	System::lock();
+	lock();
 #ifndef BCC_BLOCK_IGNORE
 	setvect(0x08, oldRoutine);
 #endif
-	System::unlock();
+	unlock();
 }
 
 

@@ -9,7 +9,6 @@
 #define GLOBAL_H_
 
 
-
 enum State
 {
 	BORN,
@@ -19,6 +18,10 @@ enum State
 	SLEEPING,
 	DEAD
 };
+
+void lock();
+
+void unlock();
 
 
 #endif /* GLOBAL_H_ */

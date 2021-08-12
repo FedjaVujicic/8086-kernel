@@ -8,27 +8,29 @@ ID PCB::curID = 0;
 void PCB::wrapper()
 {
 	running->myThread->run();
-	System::lock();
+	lock();
 	running->state = DEAD;
-	System::unlock();
+	unlock();
 	System::dispatch();
 }
 
 PCB::PCB (Thread *myThread, Time timeSlice, StackSize stackSize)
 {
+	lock();
 	this->stackSize = stackSize;
 	this->timeSlice = timeSlice;
 	this->myThread = myThread;
 	id = curID++;
 	state = BORN;
 	initializeStack();
+	unlock();
 }
 
 volatile PCB* PCB::running = 0;
 
 void PCB::initializeStack()
 {
-	System::lock();
+	lock();
 	stack = new unsigned[stackSize];
 	stack[stackSize - 1] = 0x200;
 #ifndef BCC_BLOCK_IGNORE
@@ -39,15 +41,15 @@ void PCB::initializeStack()
 	ss = FP_SEG(stack + stackSize - 12);
 	bp = FP_OFF(stack + stackSize - 12);
 #endif
-	System::unlock();
+	unlock();
 }
 
 PCB::~PCB()
 {
-	System::lock();
+	lock();
 	if (stack != 0)
 	{
 		delete stack;
 	}
-	System::unlock();
+	unlock();
 }
