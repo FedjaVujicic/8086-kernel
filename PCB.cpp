@@ -2,8 +2,11 @@
 #include "system.h"
 #include <dos.h>
 #include "SCHEDULE.H"
+#include "queue.h"
 
-ID PCB::curID = 0;
+volatile ID PCB::curID = 0;
+Queue* PCB::pcbList = new Queue();
+volatile PCB* PCB::running = 0;
 
 void PCB::wrapper()
 {
@@ -12,6 +15,17 @@ void PCB::wrapper()
 	running->state = DEAD;
 	unlock();
 	System::dispatch();
+}
+
+PCB::~PCB()
+{
+	lock();
+	if (stack != 0)
+	{
+		delete stack;
+	}
+	delete pcbList;
+	unlock();
 }
 
 PCB::PCB (Thread *myThread, Time timeSlice, StackSize stackSize)
@@ -23,10 +37,9 @@ PCB::PCB (Thread *myThread, Time timeSlice, StackSize stackSize)
 	id = curID++;
 	state = BORN;
 	initializeStack();
+	pcbList->push(this);
 	unlock();
 }
-
-volatile PCB* PCB::running = 0;
 
 void PCB::initializeStack()
 {
@@ -44,12 +57,3 @@ void PCB::initializeStack()
 	unlock();
 }
 
-PCB::~PCB()
-{
-	lock();
-	if (stack != 0)
-	{
-		delete stack;
-	}
-	unlock();
-}

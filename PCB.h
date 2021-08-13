@@ -3,13 +3,16 @@
 #include "thread.h"
 #include "global.h"
 
+class Queue;
+
 class PCB
 {
 private:
 	friend class System;
 	friend class Thread;
+	friend class Queue;
 
-	static ID curID;
+	static volatile ID curID;
 	ID id;
 
 	unsigned sp;
@@ -20,8 +23,9 @@ private:
 	unsigned* stack;
 	Thread *myThread;
 	static volatile PCB* running;
-
 	State state;
+
+	static Queue* pcbList;
 
 	void initializeStack();
 	static void wrapper();

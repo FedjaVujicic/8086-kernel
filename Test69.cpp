@@ -17,6 +17,7 @@ public:
 			{
 				lock();
 				cout << "In thread id=" << getId() << " i = " << i << " State = " << getState() << endl;
+				cout << "In other thread id= " << (getThreadById(3 - getId()))->getId() << " State = " << (getThreadById(3 - getId()))->getState() << endl;
 				unlock();
 #ifndef BCC_BLOCK_IGNORE
 				for (int k = 0; k < 10000; ++k)

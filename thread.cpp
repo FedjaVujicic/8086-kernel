@@ -2,6 +2,7 @@
 #include "PCB.h"
 #include "SCHEDULE.H"
 #include "system.h"
+#include "queue.h"
 
 #include <iostream.h> // delet dis
 
@@ -40,4 +41,9 @@ ID Thread::getId()
 State Thread::getState()
 {
 	return myPCB->state;
+}
+
+Thread * Thread::getThreadById(ID id)
+{
+	return (PCB::pcbList->find(id))->myThread;
 }

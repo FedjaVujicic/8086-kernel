@@ -12,6 +12,7 @@ public:
 	unsigned getSize();
 	void push(PCB* x);
 	PCB* pop();
+	PCB* find(int x);
 
 private:
 	struct Node

@@ -1,4 +1,5 @@
 #include "queue.h"
+#include "PCB.h"
 
 Queue::Queue()
 {
@@ -27,10 +28,10 @@ unsigned Queue::getSize()
 	return size;
 }
 
-void Queue::push(PCB* info)
+void Queue::push(PCB* pcb)
 {
 	lock();
-	Node* cur = new Node(info);
+	Node* cur = new Node(pcb);
 	if (first == 0)
 	{
 		first = last = cur;
@@ -62,4 +63,19 @@ PCB* Queue::pop()
 	--size;
 	unlock();
 	return ret;
+}
+
+PCB* Queue::find(int x)
+{
+	lock();
+	for (Node* cur = first; cur != 0; cur = cur->next)
+	{
+		if (x == cur->pcb->id)
+		{
+			unlock();
+			return cur->pcb;
+		}
+	}
+	unlock();
+	return 0;
 }
