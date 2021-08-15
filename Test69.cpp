@@ -16,14 +16,19 @@ public:
 		for (int i = 0; i < 30; ++i)
 			{
 				lock();
-				cout << "In thread id=" << getId() << " i = " << i << " State = " << getState() << endl;
-				cout << "In other thread id= " << (getThreadById(3 - getId()))->getId() << " State = " << (getThreadById(3 - getId()))->getState() << endl;
+				cout << "In thread id=" << getId() << " i = " << i << endl;
+//				cout << "In other thread id= " << (getThreadById(3 - getId()))->getId() << " State = " << (getThreadById(3 - getId()))->getState() << endl;
 				unlock();
 #ifndef BCC_BLOCK_IGNORE
 				for (int k = 0; k < 10000; ++k)
 					for (int j = 0; j < 30000; ++j);
 #endif
 			}
+	}
+
+	~MyTestThread()
+	{
+		waitToComplete();
 	}
 };
 
@@ -38,7 +43,7 @@ int userMain(int argc, char* argv[])
 	t2->start();
 
 	unlock();
-
+/*
 #ifndef BCC_BLOCK_IGNORE
 	for (int i = 0; i < 30; ++i)
 	{
@@ -52,8 +57,10 @@ int userMain(int argc, char* argv[])
 	}
 #endif
 	cout << "Happy End, counter = " << System::counter << endl;
+*/
 
-	delete t1; delete t2;
+	delete t1;
+	delete t2;
 
 	return 0;
 }

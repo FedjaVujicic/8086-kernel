@@ -2,8 +2,7 @@
 #define PCB_H_
 #include "thread.h"
 #include "global.h"
-
-class Queue;
+#include "queue.h"
 
 class PCB
 {
@@ -11,9 +10,6 @@ private:
 	friend class System;
 	friend class Thread;
 	friend class Queue;
-
-	static volatile ID curID;
-	ID id;
 
 	unsigned sp;
 	unsigned ss;
@@ -25,7 +21,11 @@ private:
 	static volatile PCB* running;
 	State state;
 
-	static Queue* pcbList;
+	static volatile ID curID;
+	ID id;
+
+//	static Queue* pcbList;
+	Queue* pcbWaiting;
 
 	void initializeStack();
 	static void wrapper();
@@ -34,7 +34,6 @@ private:
 
 	~PCB();
 };
-
 
 
 

@@ -3,8 +3,11 @@
 #include "SCHEDULE.H"
 #include "system.h"
 #include "queue.h"
+#include "global.h"
 
 #include <iostream.h> // delet dis
+
+extern Queue* pcbList;
 
 Thread::Thread (Time timeSlice, StackSize stackSize)
 {
@@ -29,7 +32,7 @@ void Thread::start()
 	lock();
 	myPCB->state = READY;
 	Scheduler::put(myPCB);
-	cout << "Thread in scheduler, state=" << getState() << endl;// delet
+	cout << "Thread id=" << getId() <<" in scheduler, state=" << getState() << endl;// delet
 	unlock();
 }
 
@@ -38,12 +41,34 @@ ID Thread::getId()
 	return myPCB->id;
 }
 
+ID Thread::getRunningId()
+{
+	return PCB::running->id;
+}
+
+
+Thread* Thread::getThreadById(ID id)
+{
+	return (pcbList->find(id))->myThread;
+}
+
 State Thread::getState()
 {
 	return myPCB->state;
 }
 
-Thread * Thread::getThreadById(ID id)
+void Thread::waitToComplete()
 {
-	return (PCB::pcbList->find(id))->myThread;
+	lock();
+	if (myPCB != PCB::running && myPCB->state != BORN && myPCB->state != DEAD)
+	{
+		PCB::running->state = BLOCKED;
+		myPCB->pcbWaiting->push((PCB*) PCB::running);
+		unlock();
+		System::dispatch();
+	}
+	else
+	{
+		unlock();
+	}
 }

@@ -16,6 +16,8 @@ pInterrupt oldRoutine = 0;
 
 extern void tick();
 
+extern Queue* pcbList;
+
 void lock()
 {
 #ifndef BCC_BLOCK_IGNORE
@@ -55,7 +57,7 @@ void interrupt System::timer(...){
 		PCB::running->ss = tss;
 		PCB::running->bp = tbp;
 
-		cout << "Context switch! Counter= " << counter << endl;
+		cout << "Context switch! Old thread id=" << PCB::running->id << endl;
 		lock();
 
 		if (PCB::running->state == RUNNING)
@@ -63,14 +65,10 @@ void interrupt System::timer(...){
 			PCB::running->state = READY;
 			Scheduler::put((PCB*) PCB::running);
 		}
-		else // delet
-		{
-			cout << "Thread dead, not putting into the scheduler." << endl;
-			lock();
-		}
 		PCB::running = Scheduler::get();
 		PCB::running->state = RUNNING;
 
+		cout << "Context switch! New thread id=" << PCB::running->id << endl;
 
 		tsp = PCB::running->sp;
 		tss = PCB::running->ss;
@@ -119,6 +117,7 @@ void System::initialize()
 void System::restore()
 {
 	lock();
+	delete pcbList;
 #ifndef BCC_BLOCK_IGNORE
 	setvect(0x08, oldRoutine);
 #endif

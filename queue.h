@@ -1,5 +1,5 @@
-#pragma once
-#include "global.h"
+#ifndef QUEUE_H_
+#define QUEUE_H_
 
 class PCB;
 
@@ -21,13 +21,13 @@ private:
 		Node* next;
 		Node(PCB* p)
 		{
-			lock();
 			pcb = p;
 			next = 0;
-			unlock();
 		}
 	};
 
 	Node* first, * last;
 	unsigned size;
 };
+
+#endif

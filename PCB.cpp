@@ -3,16 +3,28 @@
 #include <dos.h>
 #include "SCHEDULE.H"
 #include "queue.h"
+#include "global.h"
+
+#include <iostream.h> //delet
 
 volatile ID PCB::curID = 0;
-Queue* PCB::pcbList = new Queue();
 volatile PCB* PCB::running = 0;
+Queue* pcbList = new Queue();
 
 void PCB::wrapper()
 {
 	running->myThread->run();
 	lock();
 	running->state = DEAD;
+	cout << "Thread id=" << running->id << " finished" << endl; // delet
+	lock(); //delet
+	PCB* temp;
+	while (running->pcbWaiting->getSize() > 0)
+	{
+		temp = running->pcbWaiting->pop();
+		temp->state = READY;
+		Scheduler::put(temp);
+	}
 	unlock();
 	System::dispatch();
 }
@@ -24,7 +36,6 @@ PCB::~PCB()
 	{
 		delete stack;
 	}
-	delete pcbList;
 	unlock();
 }
 
@@ -38,6 +49,7 @@ PCB::PCB (Thread *myThread, Time timeSlice, StackSize stackSize)
 	state = BORN;
 	initializeStack();
 	pcbList->push(this);
+	pcbWaiting = new Queue();
 	unlock();
 }
 
