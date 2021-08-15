@@ -57,7 +57,6 @@ void interrupt System::timer(...){
 		PCB::running->ss = tss;
 		PCB::running->bp = tbp;
 
-		cout << "Context switch! Old thread id=" << PCB::running->id << endl;
 		lock();
 
 		if (PCB::running->state == RUNNING)
@@ -68,7 +67,6 @@ void interrupt System::timer(...){
 		PCB::running = Scheduler::get();
 		PCB::running->state = RUNNING;
 
-		cout << "Context switch! New thread id=" << PCB::running->id << endl;
 
 		tsp = PCB::running->sp;
 		tss = PCB::running->ss;
@@ -84,19 +82,8 @@ void interrupt System::timer(...){
 		}
 #endif
 	} 
-		                                              
+
 	System::contextSwitchRequested = 0;
-}
-
-//Context switch on request
-void System::dispatch()
-{
-	lock();
-
-	System::contextSwitchRequested = 1;
-	System::timer();
-
-	unlock();
 }
 
 //Saves old timer routine to 60h, and puts the user timer routine to 8h

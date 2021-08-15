@@ -24,13 +24,12 @@ private:
 	static volatile ID curID;
 	ID id;
 
-//	static Queue* pcbList;
 	Queue* pcbWaiting;
 
 	void initializeStack();
 	static void wrapper();
 
-	PCB (Thread *myThread = 0, Time timeSlice = defaultTimeSlice, StackSize stackSize = defaultStackSize); //delete default values
+	PCB (Thread *myThread = 0, StackSize stackSize = defaultStackSize, Time timeSlice = defaultTimeSlice); //delete default values
 
 	~PCB();
 };

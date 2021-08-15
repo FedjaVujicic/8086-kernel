@@ -4,8 +4,7 @@
 #include "SCHEDULE.H"
 #include "queue.h"
 #include "global.h"
-
-#include <iostream.h> //delet
+#include "thread.h"
 
 volatile ID PCB::curID = 0;
 volatile PCB* PCB::running = 0;
@@ -16,8 +15,6 @@ void PCB::wrapper()
 	running->myThread->run();
 	lock();
 	running->state = DEAD;
-	cout << "Thread id=" << running->id << " finished" << endl; // delet
-	lock(); //delet
 	PCB* temp;
 	while (running->pcbWaiting->getSize() > 0)
 	{
@@ -26,7 +23,7 @@ void PCB::wrapper()
 		Scheduler::put(temp);
 	}
 	unlock();
-	System::dispatch();
+	dispatch();
 }
 
 PCB::~PCB()
@@ -39,7 +36,7 @@ PCB::~PCB()
 	unlock();
 }
 
-PCB::PCB (Thread *myThread, Time timeSlice, StackSize stackSize)
+PCB::PCB (Thread *myThread, StackSize stackSize, Time timeSlice)
 {
 	lock();
 	this->stackSize = stackSize;

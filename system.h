@@ -1,5 +1,6 @@
 #ifndef SYSTEM_H_
 #define SYSTEM_H_
+#include "thread.h"
 
 class System
 {
@@ -10,7 +11,6 @@ public:
 	static void initialize();
 	static void restore();
 	static void interrupt timer(...);
-	static void dispatch();
 };
 
 

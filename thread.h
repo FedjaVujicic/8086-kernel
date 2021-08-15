@@ -22,9 +22,7 @@ public:
 	static ID getRunningId();
 	static Thread * getThreadById(ID id);
 
-	State getState(); // delet dis
-
-	Thread (Time timeSlice = defaultTimeSlice, StackSize stackSize = defaultStackSize);
+	Thread (StackSize stackSize = defaultStackSize, Time timeSlice = defaultTimeSlice);
 
 protected:
 	friend class PCB;
@@ -34,5 +32,7 @@ protected:
 private:
 	PCB* myPCB;
 };
+
+void dispatch ();
 
 #endif
