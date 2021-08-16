@@ -19,7 +19,6 @@ enum State
 };
 
 void lock();
-
 void unlock();
 
 

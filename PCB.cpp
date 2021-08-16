@@ -8,7 +8,7 @@
 
 volatile ID PCB::curID = 0;
 volatile PCB* PCB::running = 0;
-Queue* pcbList = new Queue();
+Queue* pcbList = 0;
 
 void PCB::wrapper()
 {
@@ -65,4 +65,3 @@ void PCB::initializeStack()
 #endif
 	unlock();
 }
-

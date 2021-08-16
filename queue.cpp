@@ -1,5 +1,6 @@
 #include "queue.h"
 #include "PCB.h"
+#include "system.h"
 
 Queue::Queue()
 {

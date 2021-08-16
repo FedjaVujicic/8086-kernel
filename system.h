@@ -2,6 +2,8 @@
 #define SYSTEM_H_
 #include "thread.h"
 
+
+
 class System
 {
 public:
@@ -12,6 +14,5 @@ public:
 	static void restore();
 	static void interrupt timer(...);
 };
-
 
 #endif /* SYSTEM_H_ */

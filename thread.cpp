@@ -9,12 +9,16 @@ extern Queue* pcbList;
 
 void dispatch()
 {
-	lock();
+#ifndef BCC_BLOCK_IGNORE
+	asm cli;
+#endif
 
 	System::contextSwitchRequested = 1;
 	System::timer();
 
-	unlock();
+#ifndef BCC_BLOCK_IGNORE
+	asm sti;
+#endif
 }
 
 Thread::Thread (StackSize stackSize, Time timeSlice)
