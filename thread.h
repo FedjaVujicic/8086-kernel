@@ -26,6 +26,7 @@ public:
 
 protected:
 	friend class PCB;
+	friend class System;
 
 	virtual void run() {}
 
