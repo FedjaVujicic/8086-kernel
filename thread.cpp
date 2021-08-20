@@ -3,9 +3,11 @@
 #include "SCHEDULE.H"
 #include "system.h"
 #include "queue.h"
-#include "global.h"
+//#include "idle.h"
 
-extern Queue* pcbList;
+//extern Idle* idleThread;
+
+extern Queue pcbList;
 
 void dispatch()
 {
@@ -57,7 +59,11 @@ ID Thread::getRunningId()
 
 Thread* Thread::getThreadById(ID id)
 {
-	return (pcbList->find(id))->myThread;
+	if (id > pcbList.getSize())
+	{
+		return 0;
+	}
+	return (pcbList.find(id))->myThread;
 }
 
 void Thread::waitToComplete()

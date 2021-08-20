@@ -1,17 +1,15 @@
-#include <iostream.h>
 #include <dos.h>
 #include "SCHEDULE.H"
 #include "system.h"
 #include "PCB.h"
 #include "thread.h"
-#include "global.h"
-#include "idle.h"
 
 
 volatile unsigned tsp, tss, tbp;
 volatile unsigned System::counter = 20;
 volatile unsigned System::contextSwitchRequested = 0;
-volatile Idle* idleThread = 0;
+Queue pcbList;
+Idle* idleThread;
 volatile unsigned lockFlag = 1;
 
 void lock()
@@ -33,16 +31,13 @@ pInterrupt oldRoutine = 0;
 
 extern void tick();
 
-extern Queue* pcbList;
-
-
 
 void interrupt System::timer(...){
 
 	if (!contextSwitchRequested)
 	{
-		tick();
 		counter--;
+		tick();
 #ifndef BCC_BLOCK_IGNORE
 		asm int 60h;
 #endif
@@ -65,7 +60,7 @@ void interrupt System::timer(...){
 			PCB::running->ss = tss;
 			PCB::running->bp = tbp;
 
-			if (PCB::running->state == RUNNING)
+			if (PCB::running->state == RUNNING && PCB::running != idleThread->myPCB)
 			{
 				PCB::running->state = READY;
 				Scheduler::put((PCB*) PCB::running);
@@ -99,34 +94,37 @@ void interrupt System::timer(...){
 	}
 }
 
+
 //Saves old timer routine to 60h, and puts the user timer routine to 8h
 void System::initialize()
 {
-	lock();
-	PCB::running = new PCB(0, 10);
+#ifndef BCC_BLOCK_IGNORE
+	asm cli;
+#endif
+	PCB::running = new PCB(0, 4096, 10);
 	PCB::running->state = RUNNING;
-	pcbList = new Queue();
 	idleThread = new Idle();
 #ifndef BCC_BLOCK_IGNORE
 	idleThread->start();
 	oldRoutine = getvect(0x08);
 	setvect(0x60, oldRoutine);
 	setvect(0x08, timer);
+	asm sti;
 #endif
-	unlock();
 }
 
 //Restores the old timer routine
 void System::restore()
 {
-	lock();
-	delete pcbList;
+#ifndef BCC_BLOCK_IGNORE
+	asm cli;
+#endif
 	delete PCB::running;
 	delete idleThread;
 #ifndef BCC_BLOCK_IGNORE
 	setvect(0x08, oldRoutine);
+	asm sti;
 #endif
-	unlock();
 }
 
 

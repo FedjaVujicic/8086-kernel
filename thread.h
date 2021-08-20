@@ -1,7 +1,6 @@
 #ifndef _thread_h_
 #define _thread_h_
 
-#include "global.h"
 
 typedef unsigned long StackSize;
 const StackSize defaultStackSize = 4096;

@@ -1,8 +1,17 @@
 #ifndef PCB_H_
 #define PCB_H_
 #include "thread.h"
-#include "global.h"
 #include "queue.h"
+
+enum State
+{
+	BORN,
+	READY,
+	RUNNING,
+	BLOCKED,
+	SLEEPING,
+	DEAD
+};
 
 class PCB
 {
@@ -10,6 +19,7 @@ private:
 	friend class System;
 	friend class Thread;
 	friend class Queue;
+	friend class KernelSem;
 
 	unsigned sp;
 	unsigned ss;

@@ -3,12 +3,12 @@
 #include <dos.h>
 #include "SCHEDULE.H"
 #include "queue.h"
-#include "global.h"
 #include "thread.h"
 
 volatile ID PCB::curID = 0;
 volatile PCB* PCB::running = 0;
-Queue* pcbList = 0;
+
+extern Queue pcbList;
 
 void PCB::wrapper()
 {
@@ -29,6 +29,10 @@ void PCB::wrapper()
 PCB::~PCB()
 {
 	lock();
+	if (pcbWaiting != 0)
+	{
+		delete pcbWaiting;
+	}
 	if (stack != 0)
 	{
 		delete stack;
@@ -45,23 +49,25 @@ PCB::PCB (Thread *myThread, StackSize stackSize, Time timeSlice)
 	id = curID++;
 	state = BORN;
 	initializeStack();
-	pcbList->push(this);
+	pcbList.push(this);
 	pcbWaiting = new Queue();
 	unlock();
 }
 
 void PCB::initializeStack()
 {
-	lock();
-	stack = new unsigned[stackSize];
-	stack[stackSize - 1] = 0x200;
-#ifndef BCC_BLOCK_IGNORE
-	stack[stackSize - 2] = FP_SEG(wrapper);
-	stack[stackSize - 3] = FP_OFF(wrapper);
 
-	sp = FP_OFF(stack + stackSize - 12);
-	ss = FP_SEG(stack + stackSize - 12);
-	bp = FP_OFF(stack + stackSize - 12);
+	lock();
+	stackSize /= sizeof(unsigned);
+	stack = new unsigned[stackSize];
+#ifndef BCC_BLOCK_IGNORE
+	stack[stackSize - 5] = 0x200;
+	stack[stackSize - 6] = FP_SEG(wrapper);
+	stack[stackSize - 7] = FP_OFF(wrapper);
+
+	ss = FP_SEG(stack + stackSize - 16);
+	sp = FP_OFF(stack + stackSize - 16);
+	bp = sp;
 #endif
 	unlock();
 }

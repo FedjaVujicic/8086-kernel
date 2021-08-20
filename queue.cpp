@@ -32,16 +32,21 @@ unsigned Queue::getSize()
 void Queue::push(PCB* pcb)
 {
 	lock();
+	if (pcb == 0)
+	{
+		unlock();
+		return;
+	}
 	Node* cur = new Node(pcb);
 	if (first == 0)
 	{
-		first = last = cur;
+		first = cur;
 	}
 	else
 	{
 		last->next = cur;
-		last = cur;
 	}
+	last = cur;
 	++size;
 	unlock();
 }
@@ -51,6 +56,7 @@ PCB* Queue::pop()
 	lock();
 	if (first == 0)
 	{
+		unlock();
 		return 0;
 	}
 	PCB* ret = first->pcb;
