@@ -2,9 +2,7 @@
 #define SYSTEM_H_
 #include "thread.h"
 #include "idle.h"
-//#include "semaphor.h"
-
-//extern volatile Idle* idleThread;
+#include "semaphor.h"
 
 class System
 {

@@ -3,9 +3,6 @@
 #include "SCHEDULE.H"
 #include "system.h"
 #include "queue.h"
-//#include "idle.h"
-
-//extern Idle* idleThread;
 
 extern Queue pcbList;
 
