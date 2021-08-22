@@ -86,3 +86,31 @@ PCB* Queue::find(int x)
 	unlock();
 	return 0;
 }
+
+void Queue::remove(PCB* p)
+{
+	lock();
+	if (first->pcb == p)
+	{
+		pop();
+		unlock();
+		return;
+	}
+
+	for (Node* cur = first; cur != last; cur = cur->next)
+	{
+		if (cur->next->pcb == p)
+		{
+			Node* old = cur->next;
+			cur->next = cur->next->next;
+			if (cur->next == 0)
+			{
+				last = cur;
+			}
+			delete old;
+			unlock();
+			return;
+		}
+	}
+	unlock();
+}

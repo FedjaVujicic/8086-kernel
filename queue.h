@@ -13,6 +13,7 @@ public:
 	void push(PCB* x);
 	PCB* pop();
 	PCB* find(int x);
+	void remove(PCB* p);
 
 private:
 	struct Node
