@@ -1,7 +1,7 @@
 #include <DOS.H>
 #include <STDIO.H>
 #include <STDARG.H>
-#include "global.h"
+#include "system.h"
 
 int syncPrintf(const char *format, ...)
 {

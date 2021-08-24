@@ -4,11 +4,11 @@
 #include "PCB.h"
 #include "thread.h"
 
-
 volatile unsigned tsp, tss, tbp;
 volatile unsigned System::counter = 20;
 volatile unsigned System::contextSwitchRequested = 0;
 Queue pcbList;
+Queue sleepList;
 Idle* idleThread;
 volatile unsigned lockFlag = 1;
 
@@ -38,6 +38,7 @@ void interrupt System::timer(...){
 	{
 		counter--;
 		tick();
+		sleepList.update();
 #ifndef BCC_BLOCK_IGNORE
 		asm int 60h;
 #endif

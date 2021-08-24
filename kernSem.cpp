@@ -11,6 +11,8 @@
 #include "queue.h"
 #include "SCHEDULE.H"
 
+extern Queue sleepList;
+
 KernelSem::KernelSem(Semaphore* s, int init)
 {
 	lock();
@@ -32,15 +34,44 @@ int KernelSem::wait(Time maxTimeToWait)
 	lock();
 	if (--value < 0)
 	{
+		if (maxTimeToWait != 0)
+		{
+			PCB::running->timeToWait = maxTimeToWait;
+			sleepList.push((PCB*) PCB::running);
+		}
 		PCB::running->state = BLOCKED;
+		PCB::running->mySem = this;
 		pcbWaiting->push((PCB*) PCB::running);
 		unlock();
 		dispatch();
+		lock();
+		if (maxTimeToWait == 0) //non-sleeping threads
+		{
+			//signalled
+			unlock();
+			return 1;
+		}
+		else //sleeping threads
+		{
+			if (PCB::running->timeToWait != 0)
+			{
+				//signalled, remove from sleepList
+				PCB::running->timeToWait = 0;
+				sleepList.remove((PCB*) PCB::running);
+				unlock();
+				return 1;
+			}
+			else
+			{
+				//time limit exceeded, remove from sleeplist
+				sleepList.remove((PCB*) PCB::running);
+				unlock();
+				return 2;
+			}
+		}
 	}
-	else
-	{
-		unlock();
-	}
+
+	unlock();
 	return 0;
 }
 

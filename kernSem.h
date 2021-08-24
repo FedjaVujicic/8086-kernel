@@ -24,7 +24,9 @@ public:
 
 	int val() const;
 private:
-	int value;
+	friend class Queue;
+
+	volatile int value;
 	Semaphore* mySem;
 	Queue* pcbWaiting;
 };

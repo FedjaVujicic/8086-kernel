@@ -46,6 +46,8 @@ PCB::PCB (Thread *myThread, StackSize stackSize, Time timeSlice)
 	this->stackSize = stackSize;
 	this->timeSlice = timeSlice;
 	this->myThread = myThread;
+	timeToWait = 0;
+	mySem = 0;
 	id = curID++;
 	state = BORN;
 	initializeStack();

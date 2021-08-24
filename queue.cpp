@@ -1,6 +1,9 @@
 #include "queue.h"
 #include "PCB.h"
 #include "system.h"
+#include "SCHEDULE.h"
+
+extern Queue sleepList;
 
 Queue::Queue()
 {
@@ -108,8 +111,32 @@ void Queue::remove(PCB* p)
 				last = cur;
 			}
 			delete old;
+			--size;
 			unlock();
 			return;
+		}
+	}
+	unlock();
+}
+
+void Queue::update()
+{
+	lock();
+	if (this != &sleepList)
+	{
+		unlock();
+		return;
+	}
+	for (Node* cur = first; cur != 0; cur = cur->next)
+	{
+		cur->pcb->timeToWait--;
+		if (cur->pcb->timeToWait == 0)
+		{
+			cur->pcb->state = READY;
+			cur->pcb->mySem->pcbWaiting->remove(cur->pcb);
+			cur->pcb->mySem->value++;
+			cur->pcb->mySem = 0;
+			Scheduler::put(cur->pcb);
 		}
 	}
 	unlock();

@@ -15,6 +15,7 @@ public:
 	PCB* find(int x);
 	void remove(PCB* p);
 
+	void update();
 private:
 	struct Node
 	{

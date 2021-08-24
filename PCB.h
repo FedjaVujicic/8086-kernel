@@ -2,6 +2,7 @@
 #define PCB_H_
 #include "thread.h"
 #include "queue.h"
+#include "kernSem.h"
 
 enum State
 {
@@ -27,7 +28,9 @@ private:
 	unsigned timeSlice;
 	unsigned stackSize;
 	unsigned* stack;
-	Thread *myThread;
+	unsigned timeToWait;
+	KernelSem* mySem;
+	Thread* myThread;
 	static volatile PCB* running;
 	State state;
 
