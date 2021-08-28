@@ -26,7 +26,6 @@ void unlock()
 	}
 }
 
-typedef void interrupt (*pInterrupt)(...); // for setvect and getvect
 pInterrupt oldRoutine = 0;
 
 extern void tick();

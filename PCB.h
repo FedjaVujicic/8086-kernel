@@ -21,6 +21,7 @@ private:
 	friend class Thread;
 	friend class Queue;
 	friend class KernelSem;
+	friend class KernelEv;
 
 	unsigned sp;
 	unsigned ss;

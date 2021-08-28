@@ -4,6 +4,8 @@
 #include "idle.h"
 #include "semaphor.h"
 
+typedef void interrupt (*pInterrupt)(...);
+
 class System
 {
 public:
