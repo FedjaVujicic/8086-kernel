@@ -5,7 +5,7 @@
 #include "queue.h"
 #include "thread.h"
 
-volatile ID PCB::curID = 0;
+volatile ID PCB::curID = -1;
 volatile PCB* PCB::running = 0;
 
 extern Queue pcbList;

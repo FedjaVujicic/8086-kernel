@@ -25,6 +25,7 @@ public:
 	void callOldRoutine();
 
 	void signal();
+
 private:
 	friend class KernelEv;
 

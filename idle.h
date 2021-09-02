@@ -15,7 +15,6 @@ class Idle : public Thread
 public:
 	Idle();
 	void run();
-	void start();
 };
 
 

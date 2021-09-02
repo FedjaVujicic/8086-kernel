@@ -10,7 +10,6 @@ enum State
 	READY,
 	RUNNING,
 	BLOCKED,
-	SLEEPING,
 	DEAD
 };
 
@@ -40,10 +39,11 @@ private:
 
 	Queue* pcbWaiting;
 
+
 	void initializeStack();
 	static void wrapper();
 
-	PCB (Thread *myThread = 0, StackSize stackSize = defaultStackSize, Time timeSlice = defaultTimeSlice); //delete default values
+	PCB (Thread *myThread = 0, StackSize stackSize = defaultStackSize, Time timeSlice = defaultTimeSlice);
 
 	~PCB();
 };

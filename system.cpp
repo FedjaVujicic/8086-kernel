@@ -4,13 +4,17 @@
 #include "PCB.h"
 #include "thread.h"
 
+
 volatile unsigned tsp, tss, tbp;
 volatile unsigned System::counter = 20;
 volatile unsigned System::contextSwitchRequested = 0;
 Queue pcbList;
 Queue sleepList;
-Idle* idleThread;
+Idle idleThread;
 volatile unsigned lockFlag = 1;
+pInterrupt oldRoutine = 0;
+
+extern void tick();
 
 void lock()
 {
@@ -25,11 +29,6 @@ void unlock()
 		dispatch();
 	}
 }
-
-pInterrupt oldRoutine = 0;
-
-extern void tick();
-
 
 void interrupt System::timer(...){
 
@@ -60,7 +59,7 @@ void interrupt System::timer(...){
 			PCB::running->ss = tss;
 			PCB::running->bp = tbp;
 
-			if (PCB::running->state == RUNNING && PCB::running != idleThread->myPCB)
+			if (PCB::running->state == RUNNING && PCB::running != idleThread.myPCB)
 			{
 				PCB::running->state = READY;
 				Scheduler::put((PCB*) PCB::running);
@@ -68,7 +67,7 @@ void interrupt System::timer(...){
 			PCB::running = Scheduler::get();
 			if (PCB::running == 0)
 			{
-				PCB::running = idleThread->myPCB;
+				PCB::running = idleThread.myPCB;
 			}
 			PCB::running->state = RUNNING;
 
@@ -103,9 +102,7 @@ void System::initialize()
 #endif
 	PCB::running = new PCB(0, 4096, 10);
 	PCB::running->state = RUNNING;
-	idleThread = new Idle();
 #ifndef BCC_BLOCK_IGNORE
-	idleThread->start();
 	oldRoutine = getvect(0x08);
 	setvect(0x60, oldRoutine);
 	setvect(0x08, timer);
@@ -120,7 +117,6 @@ void System::restore()
 	asm cli;
 #endif
 	delete PCB::running;
-	delete idleThread;
 #ifndef BCC_BLOCK_IGNORE
 	setvect(0x08, oldRoutine);
 	asm sti;

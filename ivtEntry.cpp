@@ -9,6 +9,7 @@
 #include "kernEv.h"
 #include <dos.h>
 
+
 IvtEntry* IvtEntry::ivtEntries[NUM_ENTRIES];
 
 #ifndef BCC_BLOCK_IGNORE
@@ -39,3 +40,4 @@ void IvtEntry::signal()
 {
 	myEvent->signal();
 }
+

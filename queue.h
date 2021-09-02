@@ -16,6 +16,8 @@ public:
 	void remove(PCB* p);
 
 	void update();
+
+	void print();
 private:
 	struct Node
 	{
